@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "check-status": "node scripts/check-trap-status.js",
-    "simulate-sniper": "ATTACK_TYPE=sniper node scripts/simulate-attack.js",
-    "simulate-frontrun": "ATTACK_TYPE=frontrun node scripts/simulate-attack.js",
-    "simulate-rapid": "ATTACK_TYPE=rapid node scripts/simulate-attack.js",
-    "simulate-coordinated": "ATTACK_TYPE=coordinated node scripts/simulate-attack.js",
+    "simulate-sniper": "node demo/demo-attack.js sniper",
+    "simulate-frontrun": "node demo/demo-attack.js frontrun",
+    "simulate-rapid": "node demo/demo-attack.js rapid",
+    "simulate-coordinated": "node demo/demo-attack.js coordinated",
     "test-collect": "node scripts/test-collect.js",
     "monitor": "node scripts/monitor-launch.js"
   },
