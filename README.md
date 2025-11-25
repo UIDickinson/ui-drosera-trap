@@ -184,7 +184,7 @@ Deploy mock Token, DEX, and Trap to Hoodi testnet:
 ```bash
 cd /workspaces/ui-drosera-trap
 source .env
-forge script DeployDemo.s.sol:DeployDemo --rpc-url $HOODI_RPC --broadcast -vvv
+forge script DeployDemo.s.sol:DeployDemo --fork-url https://0xrpc.io/hoodi --broadcast -vvv
 ```
 
 **What gets deployed:**
@@ -202,7 +202,7 @@ source ../.env
 
 # Using Foundry script
 forge script script/Deploy.s.sol:DeployFairLaunchGuardian \
-  --rpc-url $HOODI_RPC \
+  --fork-url https://0xrpc.io/hoodi \
   --broadcast \
   -vvv
 ```
@@ -211,8 +211,8 @@ forge script script/Deploy.s.sol:DeployFairLaunchGuardian \
 
 ```bash
 cd contracts
-forge script script/Verify.s.sol:VerifyFairLaunchGuardian \
-  --rpc-url $HOODI_RPC
+forge script script/Verify.s.sol:VerifyTrap \
+  --fork-url https://0xrpc.io/hoodi
 ```
 
 ---
@@ -234,16 +234,16 @@ Shows current configuration, monitoring status, and remaining blocks.
 
 ```bash
 # Sniper bot
-npm run simulate:sniper
+npm run simulate-sniper
 
 # Front-running bot
-npm run simulate:frontrun
+npm run simulate-frontrun
 
 # Rapid buying bot
-npm run simulate:rapid
+npm run simulate-rapid
 
 # Coordinated attack
-npm run simulate:coordinated
+npm run simulate-coordinated
 ```
 
 ### Test Collect Function
