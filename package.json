@@ -1,0 +1,47 @@
+{
+  "name": "fair-launch-guardian",
+  "version": "1.0.0",
+  "description": "Drosera Trap for protecting token launches from bots and unfair distribution",
+  "keywords": [
+    "drosera",
+    "defi",
+    "security",
+    "bot-detection",
+    "fair-launch",
+    "solidity",
+    "ethereum"
+  ],
+  "homepage": "https://github.com/your-org/fair-launch-guardian#readme",
+  "bugs": {
+    "url": "https://github.com/your-org/fair-launch-guardian/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-org/fair-launch-guardian.git"
+  },
+  "license": "MIT",
+  "author": "Fair Launch Guardian Contributors",
+  "scripts": {
+    "install:all": "cd contracts && forge install && cd ../operator && npm install",
+    "build:contracts": "cd contracts && forge build",
+    "build:all": "npm run build:contracts",
+    "test:contracts": "cd contracts && forge test -vv",
+    "test:scripts": "cd operator && npm test",
+    "test:all": "npm run test:contracts && npm run test:scripts",
+    "coverage": "cd contracts && forge coverage",
+    "deploy:hoodi": "cd contracts && forge script script/Deploy.s.sol --rpc-url $HOODI_RPC --broadcast",
+    "deploy:sepolia": "cd contracts && forge script script/Deploy.s.sol --rpc-url $SEPOLIA_RPC --broadcast",
+    "check-status": "cd operator && npm run check-status",
+    "simulate:sniper": "cd operator && npm run simulate-sniper",
+    "simulate:frontrun": "cd operator && npm run simulate-frontrun",
+    "simulate:rapid": "cd operator && npm run simulate-rapid",
+    "simulate:coordinated": "cd operator && npm run simulate-coordinated",
+    "clean": "cd contracts && forge clean && cd ../operator && rm -rf node_modules",
+    "format": "cd contracts && forge fmt",
+    "lint": "cd contracts && forge fmt --check"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

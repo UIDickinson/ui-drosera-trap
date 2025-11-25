@@ -1,0 +1,25 @@
+{
+  "name": "fair-launch-guardian-contracts",
+  "version": "1.0.0",
+  "description": "Smart contracts for Fair Launch Guardian Drosera Trap",
+  "scripts": {
+    "build": "forge build",
+    "test": "forge test",
+    "test:verbose": "forge test -vvv",
+    "test:gas": "forge test --gas-report",
+    "coverage": "forge coverage",
+    "deploy:hoodi": "forge script script/Deploy.s.sol --rpc-url $HOODI_RPC --broadcast",
+    "deploy:sepolia": "forge script script/Deploy.s.sol --rpc-url $SEPOLIA_RPC --broadcast",
+    "verify": "forge script script/Verify.s.sol --rpc-url $HOODI_RPC",
+    "clean": "forge clean"
+  },
+  "keywords": [
+    "drosera",
+    "defi",
+    "security",
+    "solidity",
+    "foundry"
+  ],
+  "author": "",
+  "license": "MIT"
+}

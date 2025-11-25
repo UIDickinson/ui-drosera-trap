@@ -1,0 +1,32 @@
+{
+  "name": "fair-launch-guardian-operator",
+  "version": "1.0.0",
+  "description": "Testing and utility scripts for Fair Launch Guardian",
+  "main": "index.js",
+  "scripts": {
+    "check-status": "node scripts/check-trap-status.js",
+    "simulate-sniper": "ATTACK_TYPE=sniper node scripts/simulate-attack.js",
+    "simulate-frontrun": "ATTACK_TYPE=frontrun node scripts/simulate-attack.js",
+    "simulate-rapid": "ATTACK_TYPE=rapid node scripts/simulate-attack.js",
+    "simulate-coordinated": "ATTACK_TYPE=coordinated node scripts/simulate-attack.js",
+    "test-collect": "node scripts/test-collect.js",
+    "monitor": "node scripts/monitor-launch.js"
+  },
+  "keywords": [
+    "drosera",
+    "defi",
+    "security",
+    "web3"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "ethers": "^5.7.2",
+    "dotenv": "^16.3.1",
+    "chalk": "^4.1.2"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
