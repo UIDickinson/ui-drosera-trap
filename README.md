@@ -93,7 +93,7 @@ npm list ethers dotenv chalk
 Copy the example `.env` file and fill in your values:
 
 ```bash
-cp env.example .env
+cp env.example ui-drosera-trap/contracts/.env
 ```
 
 **Required variables:**
@@ -142,6 +142,14 @@ forge build
 ```
 Compiler run successful
 ```
+
+if forge build doesn't compile, run this:
+
+```bash
+git submodule add https://github.com/foundry-rs/forge-std lib/forge-std
+```
+
+And then run `forge build` again.
 
 If you see warnings about unused parameters or state mutability, those are informational and safe to ignore.
 

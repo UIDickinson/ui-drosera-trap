@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "forge-std/Script.sol";
 import "../src/FairLaunchGuardianTrap.sol";
 import "../src/demo/DemoToken.sol";
-import "../src/demo/DemoDEX.sol";
+import "../src/demo/DemoDex.sol";
 
 /**
  * @title DeployDemo
@@ -105,7 +105,7 @@ contract TestDemo is Script {
     
     function run() external {
         address tokenAddr = vm.envAddress("TOKEN_ADDRESS");
-        address dexAddr = vm.envAddress("DEX_ADDRESS");
+        address payable dexAddr = payable(vm.envAddress("DEX_ADDRESS"));
         address trapAddr = vm.envAddress("TRAP_ADDRESS");
         
         console.log("Testing deployed contracts...");
