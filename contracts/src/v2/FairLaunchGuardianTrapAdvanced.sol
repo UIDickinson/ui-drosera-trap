@@ -108,10 +108,10 @@ contract FairLaunchGuardianTrapAdvanced is ITrap {
     
     // ==================== CONFIGURATION ====================
     
-    // PRODUCTION: Update these addresses before deployment!
+    // PRODUCTION: These addresses are set for Hoodi testnet deployment
     // These MUST be literal addresses (compile-time constants for Drosera)
-    address public constant TOKEN_ADDRESS = address(0xDEAD); // TODO: Replace with actual token
-    address public constant LIQUIDITY_POOL = address(0xBEEF); // TODO: Replace with actual pool
+    address public constant TOKEN_ADDRESS = 0xBE820752AE8E48010888E89862cbb97aF506d183; // DemoToken on Hoodi
+    address public constant LIQUIDITY_POOL = 0xE225187b6f9F107d558B9585D5F5D94Aae6F4F71; // DemoDEX on Hoodi
     bool public constant TOKEN_IS_TOKEN0 = true; // TODO: Set based on actual pair ordering
     uint256 public constant LAUNCH_BLOCK = 0; // TODO: Set to actual launch block
     
