@@ -1,16 +1,16 @@
 # Fair Launch Guardian - Deployment Summary
 
-## ✅ Test Results: 36/36 Passing
+## Test Results: 36/36 Passing
 
 All tests pass with the V2 architecture:
-- FairLaunchGuardianTrapSimple: 8/8 ✅
-- FairLaunchGuardianTrapEventLog: 2/2 ✅  
-- FairLaunchGuardianTrapAdvanced: 2/2 ✅
-- FairLaunchResponder: 9/9 ✅
-- FairLaunchResponderAdvanced: 5/5 ✅
-- Integration Tests: 10/10 ✅
+- FairLaunchGuardianTrapSimple: 8/8
+- FairLaunchGuardianTrapEventLog: 2/2  
+- FairLaunchGuardianTrapAdvanced: 2/2
+- FairLaunchResponder: 9/9
+- FairLaunchResponderAdvanced: 5/5
+- Integration Tests: 10/10
 
-## ✅ Deployed Contracts (Hoodi Testnet - Chain 560048)
+## Deployed Contracts (Hoodi Testnet - Chain 560048)
 
 | Contract | Address | Purpose |
 |----------|---------|---------|
@@ -27,7 +27,7 @@ All tests pass with the V2 architecture:
 - **Drosera Relay**: `https://relay.hoodi.drosera.io`
 - **Drosera Address**: `0x91cB447BaFc6e0EA0F4Fe056F5a9b1F14bb06e5D`
 
-## 🔧 Registration with Drosera
+## Registration with Drosera
 
 ### Option 1: Using Drosera CLI
 
@@ -149,4 +149,4 @@ forge test --match-test testDetectsExcessiveAccumulationFromEvents -vvvv
 
 **Deployment Date**: $(date)
 **Network**: Hoodi Testnet (Chain 560048)
-**Status**: ✅ Complete - Ready for Drosera Registration
+**Status**: Complete - Ready for Drosera Registration
