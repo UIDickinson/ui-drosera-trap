@@ -3,47 +3,68 @@ pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
 import "forge-std/console.sol";
-import "../src/FairLaunchGuardianTrap.sol";
+import "../src/v2/FairLaunchGuardianTrapSimple.sol";
 
 /**
  * @title SimulateDetection
- * @notice Script to test detection logic without deploying
+ * @notice Script to test V2 Simple trap detection logic without deploying
  */
 contract SimulateDetection is Script {
     
     function run() external {
-        console.log("=== Simulating Detection Logic ===");
+        console.log("=== Simulating V2 Simple Trap Detection Logic ===");
+        console.log("");
         
-        // Create mock collect data
+        // Create mock collect data using Simple trap's CollectOutput struct
         bytes[] memory mockData = new bytes[](3);
         
-        // Mock data for 3 blocks
-        address[] memory buyers1 = new address[](1);
-        buyers1[0] = address(0x123);
-        uint256[] memory amounts1 = new uint256[](1);
-        amounts1[0] = 8000; // 8% of supply
-        uint256[] memory gas1 = new uint256[](1);
-        gas1[0] = 100 gwei;
+        // Mock data for block 1002 - normal state
+        mockData[0] = abi.encode(
+            uint256(1002),      // blockNumber
+            uint256(1000000),   // timestamp
+            uint256(1000000 ether), // totalSupply
+            uint256(500000 ether)   // poolBalance (50% in pool)
+        );
         
-        mockData[0] = abi.encode(FairLaunchGuardianTrap.CollectOutput({
-            blockNumber: 1002,
-            recentBuyers: buyers1,
-            buyAmounts: amounts1,
-            gasPrices: gas1,
-            totalSupply: 100000,
-            liquidityPoolBalance: 50000,
-            averageGasPrice: 50 gwei
-        }));
+        // Mock data for block 1003 - slight drain
+        mockData[1] = abi.encode(
+            uint256(1003),
+            uint256(1000012),
+            uint256(1000000 ether),
+            uint256(480000 ether)   // 4% drain
+        );
         
-        // Similar for blocks 1 and 2
-        mockData[1] = mockData[0];
-        mockData[2] = mockData[0];
+        // Mock data for block 1004 - significant drain (should trigger)
+        mockData[2] = abi.encode(
+            uint256(1004),
+            uint256(1000024),
+            uint256(1000000 ether),
+            uint256(400000 ether)   // 20% total drain - should trigger!
+        );
         
-        console.log("Mock data created for 3 blocks");
-        console.log("Buyer:", buyers1[0]);
-        console.log("Amount: 8000 (8% of 100,000 supply)");
-        console.log("This should trigger EXCESSIVE_ACCUMULATION");
+        console.log("Mock data created for 3 blocks:");
+        console.log("  Block 1002: Pool balance = 500,000 tokens (50%)");
+        console.log("  Block 1003: Pool balance = 480,000 tokens (48%)");
+        console.log("  Block 1004: Pool balance = 400,000 tokens (40%)");
         console.log("");
-        console.log("To test with real trap, deploy and call shouldRespond()");
+        console.log("This simulates a 20% liquidity drain over 3 blocks.");
+        console.log("The Simple trap should detect LIQUIDITY_MANIPULATION.");
+        console.log("");
+        
+        // Deploy a simple trap instance to test
+        FairLaunchGuardianTrapSimple trap = new FairLaunchGuardianTrapSimple();
+        
+        console.log("Testing shouldRespond()...");
+        (bool shouldRespond, bytes memory responseData) = trap.shouldRespond(mockData);
+        
+        if (shouldRespond) {
+            console.log("DETECTION TRIGGERED!");
+            console.log("Response data length:", responseData.length);
+        } else {
+            console.log("No detection triggered (threshold not met or data insufficient)");
+        }
+        
+        console.log("");
+        console.log("=== Simulation Complete ===");
     }
 }

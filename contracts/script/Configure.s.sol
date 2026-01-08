@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
-import "../src/FairLaunchGuardianTrap.sol";
+import "../src/v2/FairLaunchGuardianTrap.sol";
 
 /**
  * @title ConfigureTrap

@@ -1,0 +1,25 @@
+# Compiler outputs
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+
+# Dependencies
+node_modules/
+contracts/lib/
+
+# Environment
+.env
+*.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

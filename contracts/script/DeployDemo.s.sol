@@ -2,22 +2,31 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
-import "../src/FairLaunchGuardianTrap.sol";
+import "../src/v2/FairLaunchGuardianTrapSimple.sol";
+import "../src/v2/FairLaunchResponder.sol";
+import "../src/v2/FairLaunchConfig.sol";
 import "../src/demo/DemoToken.sol";
 import "../src/demo/DemoDex.sol";
 
 /**
  * @title DeployDemo
- * @notice Complete demo deployment script for Foundry
+ * @notice Complete demo deployment script for Foundry (V2 Architecture)
  * @dev Run with: forge script script/DeployDemo.s.sol --broadcast --rpc-url $HOODI_RPC
+ * 
+ * V2 Architecture:
+ * - Trap is stateless (no constructor args)
+ * - Responder handles actions (pause, blacklist)
+ * - Token/Pool addresses are baked into FairLaunchConfig
  */
 contract DeployDemo is Script {
+    
+    address constant DROSERA_ADDRESS = 0x91cB447BaFc6e0EA0F4Fe056F5a9b1F14bb06e5D;
     
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         
         console.log("========================================");
-        console.log("  Fair Launch Guardian - Demo Deploy");
+        console.log("  Fair Launch Guardian V2 - Demo Deploy");
         console.log("========================================");
         console.log("");
         
@@ -39,23 +48,20 @@ contract DeployDemo is Script {
         console.log("  DEX:", address(dex));
         console.log("");
         
-        // 3. Deploy Trap
-        console.log("Step 3: Deploying Fair Launch Guardian Trap...");
-        FairLaunchGuardianTrap trap = new FairLaunchGuardianTrap(
+        // 3. Deploy Responder (handles actions)
+        console.log("Step 3: Deploying FairLaunchResponder...");
+        FairLaunchResponder responder = new FairLaunchResponder(
+            DROSERA_ADDRESS,
             address(token),
-            address(dex),
-            block.number,  // Launch now
-            50,            // Monitor 50 blocks
-            500,           // 5% max wallet
-            200            // 2x max gas
+            address(dex)
         );
-        console.log("  Trap:", address(trap));
+        console.log("  Responder:", address(responder));
         console.log("");
         
-        // 4. Integrate trap with token
-        console.log("Step 4: Integrating trap with token...");
-        token.integrateTrap(address(trap), address(dex));
-        console.log("  Integration complete!");
+        // 4. Deploy Trap (stateless detection)
+        console.log("Step 4: Deploying FairLaunchGuardianTrapSimple...");
+        FairLaunchGuardianTrapSimple trap = new FairLaunchGuardianTrapSimple();
+        console.log("  Trap:", address(trap));
         console.log("");
         
         // 5. Add liquidity
@@ -68,29 +74,41 @@ contract DeployDemo is Script {
         
         vm.stopBroadcast();
         
+        // Check config alignment
+        (address configToken, address configPool) = trap.getConfig();
+        console.log("========================================");
+        console.log("  Configuration Check");
+        console.log("========================================");
+        console.log("FairLaunchConfig values:");
+        console.log("  Token:", configToken);
+        console.log("  Pool:", configPool);
+        console.log("");
+        if (configToken != address(token) || configPool != address(dex)) {
+            console.log("WARNING: FairLaunchConfig addresses do not match deployed contracts!");
+            console.log("Update FairLaunchConfig.sol with:");
+            console.log("  TOKEN_ADDRESS =", address(token));
+            console.log("  LIQUIDITY_POOL =", address(dex));
+        }
+        console.log("");
+        
         // Print summary
         console.log("========================================");
         console.log("  Deployment Complete!");
         console.log("========================================");
         console.log("");
         console.log("Deployed Contracts:");
-        console.log("  Token:  ", address(token));
-        console.log("  DEX:    ", address(dex));
-        console.log("  Trap:   ", address(trap));
+        console.log("  Token:     ", address(token));
+        console.log("  DEX:       ", address(dex));
+        console.log("  Responder: ", address(responder));
+        console.log("  Trap:      ", address(trap));
         console.log("");
-        console.log("Verify on Etherscan:");
-        console.log("  https://hoodi.etherscan.io/address/", address(token));
-        console.log("  https://hoodi.etherscan.io/address/", address(trap));
+        console.log("Update drosera.toml:");
+        console.log("  response_contract =", address(responder));
         console.log("");
         console.log("Next Steps:");
-        console.log("1. Normal user buy:");
-        console.log("   cast send", address(dex), '"swap()"', "--value 0.5ether --rpc-url $HOODI_RPC");
-        console.log("");
-        console.log("2. Bot attack (will be blocked):");
-        console.log("   cast send", address(dex), '"swap()"', "--value 10ether --rpc-url $HOODI_RPC");
-        console.log("");
-        console.log("3. Check blacklist:");
-        console.log("   cast call", address(trap), '"isBlacklisted(address)"', "<BOT_ADDRESS> --rpc-url $HOODI_RPC");
+        console.log("1. Update FairLaunchConfig.sol with deployed addresses");
+        console.log("2. Rebuild: forge build");
+        console.log("3. Register trap: drosera register", address(trap));
         console.log("");
         console.log("Save these addresses!");
         console.log("");
@@ -99,7 +117,7 @@ contract DeployDemo is Script {
 
 /**
  * @title TestDemo
- * @notice Test the deployed demo contracts
+ * @notice Test the deployed demo contracts (V2)
  */
 contract TestDemo is Script {
     
@@ -107,13 +125,15 @@ contract TestDemo is Script {
         address tokenAddr = vm.envAddress("TOKEN_ADDRESS");
         address payable dexAddr = payable(vm.envAddress("DEX_ADDRESS"));
         address trapAddr = vm.envAddress("TRAP_ADDRESS");
+        address responderAddr = vm.envAddress("RESPONDER_ADDRESS");
         
-        console.log("Testing deployed contracts...");
+        console.log("Testing deployed V2 contracts...");
         console.log("");
         
         DemoToken token = DemoToken(tokenAddr);
         DemoDEX dex = DemoDEX(dexAddr);
-        FairLaunchGuardianTrap trap = FairLaunchGuardianTrap(trapAddr);
+        FairLaunchGuardianTrapSimple trap = FairLaunchGuardianTrapSimple(trapAddr);
+        FairLaunchResponder responder = FairLaunchResponder(responderAddr);
         
         // Check token
         console.log("Token:");
@@ -128,14 +148,20 @@ contract TestDemo is Script {
         console.log("  Price:", dex.getPrice(), "wei per token");
         console.log("");
         
-        // Check trap
+        // Check trap config
         console.log("Trap:");
-        FairLaunchGuardianTrap.LaunchConfig memory config = trap.getConfig();
-        console.log("  Active:", trap.isMonitoringActive());
-        console.log("  Max Wallet BP:", config.maxWalletBasisPoints);
-        console.log("  Launch Block:", config.launchBlock);
+        (address configToken, address configPool) = trap.getConfig();
+        console.log("  Config Token:", configToken);
+        console.log("  Config Pool:", configPool);
         console.log("");
         
-        console.log("All systems operational!");
+        // Check responder
+        console.log("Responder:");
+        console.log("  Token:", responder.guardedToken());
+        console.log("  Pool:", responder.guardedPool());
+        console.log("  Incidents:", responder.totalIncidents());
+        console.log("");
+        
+        console.log("All V2 systems operational!");
     }
 }

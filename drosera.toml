@@ -1,0 +1,141 @@
+# =========================
+# Drosera Configuration
+# Fair Launch Guardian Trap
+# =========================
+
+# Network Configuration
+ethereum_rpc    = "https://ethereum-hoodi-rpc.publicnode.com"
+drosera_rpc     = "https://relay.hoodi.drosera.io"
+eth_chain_id    = 560048
+drosera_address = "0x91cB447BaFc6e0EA0F4Fe056F5a9b1F14bb06e5D"
+
+# =========================
+# Deployed Contracts (Hoodi Testnet)
+# =========================
+# DemoToken:    0xBE820752AE8E48010888E89862cbb97aF506d183
+# DemoDEX:      0xE225187b6f9F107d558B9585D5F5D94Aae6F4F71
+# Responder:    0xFAb32eC4e0B41fBc9Ec4E3f4BA2D73aF12e18794
+# SimpleTrap:   0xC25C47e7CE52302Ef2c85620c1dfd8d7BcE4096C
+# EventLogTrap: 0x53663707d165458B534eADCb6715BC0EEfA1f212
+
+# =========================
+# Traps Configuration
+# =========================
+
+[traps]
+
+# =========================
+# STRATEGY 1: Simple State Reading
+# Best for: Quick deployment, testing, simple liquidity monitoring
+# =========================
+
+[traps.fair_launch_simple]
+path = "out/FairLaunchGuardianTrapSimple.sol/FairLaunchGuardianTrapSimple.json"
+response_contract = "0xFAb32eC4e0B41fBc9Ec4E3f4BA2D73aF12e18794"
+response_function = "handle(bytes)"
+
+# Minimal sampling for simple checks
+block_sample_size = 3
+cooldown_period_blocks = 20
+
+min_number_of_operators = 1
+max_number_of_operators = 3
+
+private_trap = true
+whitelist = []
+
+# =========================
+# STRATEGY 2: EventLog Filtering (RECOMMENDED FOR PRODUCTION)
+# Best for: Production deployments, detailed monitoring, no integration needed
+# =========================
+
+[traps.fair_launch_eventlog]
+path = "out/FairLaunchGuardianTrapEventLog.sol/FairLaunchGuardianTrapEventLog.json"
+response_contract = "0xFAb32eC4e0B41fBc9Ec4E3f4BA2D73aF12e18794"
+response_function = "handle(bytes)"
+
+# Larger window for pattern detection
+block_sample_size = 5
+cooldown_period_blocks = 20
+
+min_number_of_operators = 1
+max_number_of_operators = 3
+
+private_trap = true
+whitelist = []
+
+# EventLog filtering configuration (if Drosera supports)
+# [traps.fair_launch_eventlog.event_filters]
+# event_signature = "Swap(address,uint256,uint256,uint256,uint256,address)"
+# target_address = "0xYOUR_POOL_ADDRESS"
+
+# =========================
+# STRATEGY 3: Advanced Detection (COMPREHENSIVE)
+# Best for: High-value launches, maximum protection, accepts complexity
+# =========================
+
+[traps.fair_launch_advanced]
+path = "out/FairLaunchGuardianTrapAdvanced.sol/FairLaunchGuardianTrapAdvanced.json"
+response_contract = "0xFAb32eC4e0B41fBc9Ec4E3f4BA2D73aF12e18794"
+response_function = "handle(bytes)"
+
+# Larger window for advanced pattern detection
+block_sample_size = 6
+cooldown_period_blocks = 15
+
+min_number_of_operators = 1
+max_number_of_operators = 5
+
+private_trap = true
+whitelist = []
+
+# =========================
+# Data Strategy Comparison
+# =========================
+
+# Simple State Reading:
+# ✅ No constructor args needed
+# ✅ Easiest to deploy
+# ✅ No integration required
+# ⚠️  Limited detection (only liquidity drains)
+# ⚠️  Can't see individual trades
+# 
+# EventLog Filtering:
+# ✅ Most deterministic
+# ✅ No integration required
+# ✅ Detailed trade analysis
+# ✅ RECOMMENDED by Drosera review
+# ⚠️  Requires event parsing setup
+# 
+# Advanced Detection:
+# ✅ Maximum detection capabilities
+# ✅ Threat intelligence
+# ✅ Coordinated attack detection
+# ⚠️  More complex
+# ⚠️  Higher gas costs
+
+# =========================
+# Deployment Steps
+# =========================
+
+# 1. Choose your strategy (Simple/EventLog/Advanced)
+# 2. Deploy responder contract:
+#    forge create src/v2/FairLaunchResponder.sol:FairLaunchResponder \
+#      --constructor-args <DROSERA_ADDR> <TOKEN_ADDR> <POOL_ADDR>
+# 
+# 3. For Simple strategy:
+#    - Edit FairLaunchGuardianTrapSimple.sol
+#    - Set TOKEN_ADDRESS and LIQUIDITY_POOL constants
+#    - Build: forge build
+# 
+# 4. For EventLog strategy:
+#    - Deploy with constructor args OR use factory
+#    - Configure event filters in TOML
+# 
+# 5. Update TOML:
+#    - Set response_contract address
+#    - Add operator addresses to whitelist
+#    - Tune block_sample_size and cooldown
+# 
+# 6. Deploy trap:
+#    drosera-cli deploy drosera.toml
